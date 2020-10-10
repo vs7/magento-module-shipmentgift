@@ -1,0 +1,11 @@
+<?php
+$shipmentId = Mage::app()->getRequest()->getParam('shipment_id');
+$orderId = Mage::getModel('sales/order_shipment')->load($shipmentId)->getOrderId();
+$shipmentGifts = Mage::getModel('vs7_shipmentgift/shipmentgift')->loadByOrderId($orderId);
+?>
+<div><strong><?php echo $this->__('Shipment Gifts');?></strong></div>
+<div>
+<?php foreach($shipmentGifts->getData() as $gift): ?>
+    SKU: <?php echo $gift['sku']; ?>, Quantity: <?php echo $gift['qty'] . '<br />'; ?>
+<?php endforeach; ?>
+</div>

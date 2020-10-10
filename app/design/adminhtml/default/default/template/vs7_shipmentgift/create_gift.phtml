@@ -1,0 +1,129 @@
+<script type="text/javascript">
+    var shipmentgiftControl = {};
+    shipmentgiftControl = {
+        index : 0,
+        add : function () {
+            this.index++;
+            var data = {index:this.index};
+            Element.insert($('shipmentgift_row_container'), {bottom: this.template.evaluate(data)});
+            // $('shipmentgiftC' + this.index).disabled = false;
+            // $('shipmentgiftT' + this.index).disabled = false;
+            // $('shipmentgiftN' + this.index).disabled = false;
+            //this.bindCurrierOnchange();
+        },
+        deleteRow : function(event) {
+            var row = Event.findElement(event, 'tr');
+            if (row) {
+                row.parentNode.removeChild(row)
+            }
+        },
+        bindCurrierOnchange : function() {
+            var elems = $('shipmentgift_numbers_table').select('.select');
+            elems.each(function (elem) {
+                if (!elem.onchangeBound) {
+                    elem.onchangeBound = true;
+                    elem.valueInput = $(elem.parentNode.parentNode).select('.number-title')[0];
+                    elem.observe('change', this.currierOnchange);
+                }
+            }.bind(this));
+        },
+        currierOnchange : function(event) {
+            var elem = Event.element(event);
+            var option = elem.options[elem.selectedIndex];
+            if (option.value && option.value != 'custom') {
+                elem.valueInput.value = option.text;
+            }
+            else {
+                elem.valueInput.value = '';
+            }
+        }
+    }
+</script>
+<div class="grid">
+    <table cellspacing="0" class="data" id="shipmentgift_numbers_table">
+        <col width="100" />
+        <col />
+        <col />
+        <col width="80" />
+        <thead>
+        <tr class="headings">
+            <th><?php echo Mage::helper('sales')->__('Image') ?></th>
+            <th><?php echo Mage::helper('sales')->__('Title') ?></th>
+            <th><?php echo Mage::helper('sales')->__('SKU') ?> <span class="required">*</span></th>
+            <th><?php echo Mage::helper('sales')->__('Quantity') ?> <span class="required">*</span></th>
+            <th></th>
+            <th class="last"></th>
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+            <td colspan="6" class="a-center last" style="padding:8px;">
+                <div class="loader" style="display:none; margin-left: 5px; float:left">
+                    <img src="<?php echo $this->getSkinUrl('images/rule-ajax-loader.gif', array('_area' => 'adminhtml')) ?>" />
+                </div>
+                <button type="button" class="scalable " onclick="shipmentgiftControl.add()" style=""><span>Add a gift</span></button>
+            </td>
+        </tr>
+        </tfoot>
+        <tbody id="shipmentgift_row_container">
+        <tr id="shipmentgift_row_template" class="template no-display">
+            <td class="image">
+                <img src="" />
+            </td>
+            <td class="title"></td>
+            <td><input class="input-text required-entry" type="text" name="shipmentgift[__index__][number]" id="shipmentgiftN__index__" value="" /></td>
+            <td><input class="input-text required-entry" type="text" name="shipmentgift[__index__][quantity]" id="shipmentgiftQ__index__" value="1" /></td>
+            <td><a href="#" onclick="skuChanged(this, __index__); return false;"><?php echo $this->__('check') ?></a></td>
+            <td class="last"><a href="#" onclick="shipmentgiftControl.deleteRow(event);return false"><?php echo $this->__('Delete') ?></a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    //<![CDATA[
+    shipmentgiftControl.template = new Template('<tr>' + $('shipmentgift_row_template').innerHTML.replace(/__index__/g, '#{index}') + '<\/tr>');
+    //]]>
+</script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+    $.noConflict();
+
+    function deleteRow(e) {
+        jQuery(e).closest('tr').remove();
+    }
+
+    function skuChanged(object, index) {
+
+        var parentRow = jQuery(object).closest('tr');
+
+        var sku = jQuery('#shipmentgiftN' + index).val();
+        var quantity = jQuery('#shipmentgiftQ' + index).val();
+        var order_id = <?php echo Mage::app()->getRequest()->getParam('order_id');?>
+
+        if(!sku) { return false; }
+
+        startLoader();
+        jQuery.get('<?php echo Mage::helper("adminhtml")->getUrl("adminhtml/shipmentgift/index/"); ?>sku/' + sku + '/quantity/' + quantity + '/order_id/' + order_id, function(data) {
+            var finalData = jQuery.parseJSON(data);
+
+            if(finalData.error) {
+                alert(finalData.error);
+            } else {
+                parentRow.find('td.image img').attr('src', finalData.image);
+                parentRow.find('td.title').html(finalData.name);
+            }
+
+            stopLoader();
+        });
+
+    }
+
+    function startLoader() {
+        jQuery('.loader').show();
+    }
+
+    function stopLoader() {
+        jQuery('.loader').hide();
+    }
+
+</script>
