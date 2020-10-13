@@ -1,15 +1,9 @@
 {
-    "name": "vs7/magento-module-shipmentgift",
+    "name":"vs7/magento-module-shipmentgift",
+    "type":"magento-module",
+    "version":"0.1.0",
+    "license": "OSL-3.0",
     "description": "Magento extension. Shipment Gift - allows to include a gift product in shipment in admin",
-    "require": {
-        "magento/framework": "*"
-    },
-    "type": "magento-module",
-    "version": "0.1.0",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
-    ],
     "keywords": [
         "magento",
         "magento1",
@@ -27,12 +21,7 @@
         }
     ],
     "homepage": "https://github.com/vs7/magento-module-shipmentgift",
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "VS7\\PromoBanner\\": ""
-        }
+    "require": {
+        "magento-hackathon/magento-composer-installer": "*"
     }
 }

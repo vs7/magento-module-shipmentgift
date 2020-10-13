@@ -1,0 +1,3 @@
+app/code/community/VS7/ShipmentGift                               app/code/community/VS7/ShipmentGift
+app/design/adminhtml/default/default/template/vs7_shipmentgift    app/design/adminhtml/default/default/template/vs7_shipmentgift
+app/etc/modules/VS7_ShipmentGift.xml                              app/etc/modules/VS7_ShipmentGift.xml
